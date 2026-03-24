@@ -7,127 +7,72 @@ $users = $userObj->getAll();
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>API Test Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body class="bg-light p-5">
-<div class="container">
-    <h2 class="mb-4">User Management API Testing</h2>
+<body>
 
-    <div class="card mb-4 shadow-sm">
-        <div class="card-body">
-            <table class="table table-hover">
-                <thead class="table-light">
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($users as $user): ?>
-                    <tr id="user-row-<?php echo $user['id']; ?>">
-                        <td><?php echo $user['id']; ?></td>
-                        <td><?php echo $user['first_name'] . " " . $user['surname']; ?></td>
-                        <td><?php echo $user['email']; ?></td>
-                        <td>
-                            <button class="btn btn-sm btn-info" onclick="fetchUser(<?php echo $user['id']; ?>)">Edit (Fetch)</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteUser(<?php echo $user['id']; ?>)">Delete</button>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 shadow">
+    <a class="navbar-brand" href="#">
+        <img src="https://via.placeholder.com/30" alt="Logo" class="d-inline-block align-top">
+        <span class="ms-2">UserAdmin Pro</span>
+    </a>
+    <div class="ms-auto d-flex align-items-center text-white">
+        <i class="bi bi-bell me-3"></i>
+        <i class="bi bi-person-circle me-3"></i>
+        <i class="bi bi-gear"></i>
     </div>
+</nav>
 
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">Test Save User (Insert/Update)</div>
-        <div class="card-body">
-            <form id="saveUserForm">
-                <input type="hidden" name="id" id="user_id">
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label>First Name</label>
-                        <input type="text" name="first_name" id="first_name" class="form-control" required>
+<div class="container-fluid">
+    <div class="row" style="height: calc(100vh - 56px);">
+        
+        <div class="col-md-4 border-end bg-white p-0 d-flex flex-column">
+            <div class="p-3 border-bottom bg-light">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                    <input type="text" id="userSearch" class="form-control" placeholder="Search users...">
+                </div>
+            </div>
+            
+            <div class="list-group list-group-flush overflow-auto" id="userListContainer">
+                <?php foreach ($users as $user): ?>
+                <button type="button" 
+                        class="list-group-item list-group-item-action p-3 user-item" 
+                        onclick="loadUserForm(<?php echo $user['id']; ?>)">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1 text-primary"><?php echo $user['first_name'] . " " . $user['surname']; ?></h6>
+                        <small class="text-muted"><?php echo $user['role']; ?></small>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label>Surname</label>
-                        <input type="text" name="surname" id="surname" class="form-control" required>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label>Email</label>
-                    <input type="email" name="email" id="email" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label>Password (New User Only)</label>
-                    <input type="password" name="password" id="password" class="form-control">
-                </div>
-                <div class="mb-3">
-                    <label>Confirm Password</label>
-                    <input type="password" name="confirm_password" id="confirm_password" class="form-control">
-                </div>
-                <button type="submit" class="btn btn-success">Save User</button>
-                <button type="button" class="btn btn-secondary" onclick="resetForm()">Clear/New User</button>
-            </form>
+                    <small class="text-secondary"><?php echo $user['email']; ?></small>
+                </button>
+                <?php endforeach; ?>
+            </div>
         </div>
+
+        <div class="col-md-8 bg-light p-4 overflow-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 id="panelTitle">User Details</h4>
+                <button class="btn btn-primary" onclick="loadNewUserForm()">
+                    <i class="bi bi-plus-lg"></i> Add New User
+                </button>
+            </div>
+
+            <div id="dynamicContent" class="card shadow-sm">
+                <div class="card-body text-center py-5 text-muted">
+                    <i class="bi bi-person-bounding-box" style="font-size: 3rem;"></i>
+                    <p class="mt-3">Select a user from the list to view or edit details.</p>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
-<script>
-// --- TEST FETCH (GET API) ---
-function fetchUser(id) {
-    fetch(`api/get_user.php?id=${id}`)
-    .then(res => res.json())
-    .then(data => {
-        document.getElementById('user_id').value = data.id;
-        document.getElementById('first_name').value = data.first_name;
-        document.getElementById('surname').value = data.surname;
-        document.getElementById('email').value = data.email;
-        alert("Data Fetched! Form is now in UPDATE mode.");
-    });
-}
-
-// --- TEST SAVE (POST API) ---
-document.getElementById('saveUserForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const formData = new FormData(this);
-
-    fetch('api/save_user.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        alert(data.message);
-        if(data.success) location.reload(); 
-    });
-});
-
-// --- TEST DELETE (POST API) ---
-function deleteUser(id) {
-    if(confirm("Are you sure you want to delete this user?")) {
-        const formData = new FormData();
-        formData.append('id', id);
-
-        fetch('api/delete_user.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            alert(data.message);
-            if(data.success) document.getElementById(`user-row-${id}`).remove();
-        });
-    }
-}
-
-function resetForm() {
-    document.getElementById('saveUserForm').reset();
-    document.getElementById('user_id').value = '';
-}
-</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/script.js"></script>
 </body>
 </html>
