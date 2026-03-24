@@ -1,4 +1,5 @@
 <?php
+
 require_once 'classes/Users.php';
 $userObj = new User();
 $users = $userObj->getAll();
@@ -8,67 +9,83 @@ $users = $userObj->getAll();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Management System</title>
+    <title>MOTORDAT - User Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
+<body class="bg-primary-custom">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 shadow">
-    <a class="navbar-brand" href="#">
-        <img src="https://via.placeholder.com/30" alt="Logo" class="d-inline-block align-top">
-        <span class="ms-2">UserAdmin Pro</span>
-    </a>
-    <div class="ms-auto d-flex align-items-center text-white">
-        <i class="bi bi-bell me-3"></i>
-        <i class="bi bi-person-circle me-3"></i>
-        <i class="bi bi-gear"></i>
+<nav class="navbar navbar-light bg-white px-4 border-bottom shadow-sm">
+    <div class="container-fluid">
+        <a class="navbar-brand text-primary fw-bold" href="#">MOTORDAT</a>
+        <div class="d-flex align-items-center gap-4 text-primary">
+            <i class="bi bi-house-door-fill cursor-pointer"></i>
+            <i class="bi bi-search cursor-pointer"></i>
+            <i class="bi bi-gear-fill cursor-pointer"></i>
+            <i class="bi bi-person-fill cursor-pointer"></i>
+            <i class="bi bi-box-arrow-right cursor-pointer"></i>
+            <span class="ms-3 text-dark small">MG HEADOFFICE <i class="bi bi-chevron-down"></i></span>
+        </div>
     </div>
 </nav>
 
-<div class="container-fluid">
-    <div class="row" style="height: calc(100vh - 56px);">
-        
-        <div class="col-md-4 border-end bg-white p-0 d-flex flex-column">
-            <div class="p-3 border-bottom bg-light">
-                <div class="input-group">
-                    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-                    <input type="text" id="userSearch" class="form-control" placeholder="Search users...">
-                </div>
-            </div>
-            
-            <div class="list-group list-group-flush overflow-auto" id="userListContainer">
-                <?php foreach ($users as $user): ?>
-                <button type="button" 
-                        class="list-group-item list-group-item-action p-3 user-item" 
-                        onclick="loadUserForm(<?php echo $user['id']; ?>)">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h6 class="mb-1 text-primary"><?php echo $user['first_name'] . " " . $user['surname']; ?></h6>
-                        <small class="text-muted"><?php echo $user['role']; ?></small>
+<div class="d-flex mt-3">
+    <div class="sidebar-nav px-2">
+        <button class="btn btn-primary-dark w-100 mb-2 btn-sm py-2 active">USERS</button>
+        <button class="btn btn-primary-dark w-100 btn-sm py-2">DEALER INFO</button>
+    </div>
+
+    <div class="container-fluid mx-3">
+        <div class="card shadow rounded-3 border-0">
+            <div class="card-body p-0">
+                
+                <div class="row g-0 border-bottom p-3 align-items-center">
+                    <div class="col-md-4 pe-3">
+                        <input type="text" id="userSearch" class="form-control form-control-sm" placeholder="Search users (enter full name)...">
                     </div>
-                    <small class="text-secondary"><?php echo $user['email']; ?></small>
-                </button>
-                <?php endforeach; ?>
-            </div>
-        </div>
+                    <div class="col-md-8 d-flex justify-content-end">
+                        <button class="btn btn-primary btn-sm px-3 shadow-sm" onclick="loadNewUserForm()">+ Add new user</button>
+                    </div>
+                </div>
 
-        <div class="col-md-8 bg-light p-4 overflow-auto">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 id="panelTitle">User Details</h4>
-                <button class="btn btn-primary" onclick="loadNewUserForm()">
-                    <i class="bi bi-plus-lg"></i> Add New User
-                </button>
-            </div>
+                <div class="row g-0">
+                    
+                    <div class="col-md-4 border-end p-0">
+                        <div class="table-responsive list-scroll">
+                            <table class="table table-sm table-hover text-center mb-0">
+                                <thead class="table-light text-primary border-bottom">
+                                    <tr><th class="py-2">Username</th></tr>
+                                </thead>
+                                <tbody id="userListBody">
+                                    <?php if (!empty($users)): ?>
+                                        <?php foreach ($users as $u): ?>
+                                        <tr onclick="loadUserForm(<?= $u['id'] ?>)" class="cursor-pointer border-bottom">
+                                            <td class="small py-2"><?= htmlspecialchars($u['first_name'] . ' ' . $u['surname']) ?></td>
+                                        </tr>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <tr><td class="text-muted py-3">No users found</td></tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
 
-            <div id="dynamicContent" class="card shadow-sm">
-                <div class="card-body text-center py-5 text-muted">
-                    <i class="bi bi-person-bounding-box" style="font-size: 3rem;"></i>
-                    <p class="mt-3">Select a user from the list to view or edit details.</p>
+                    <div id="dynamicContent" class="col-md-8 p-4 bg-light-form">
+                        <div class="text-center py-5">
+                            <i class="bi bi-person-circle display-1 text-primary opacity-25"></i>
+                            <p class="text-muted mt-3">Select a user from the list to view or edit details.</p>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
 
+        <div class="text-center mt-3">
+            <button class="btn btn-primary btn-sm px-4 shadow-sm">RESEND WELCOME MAIL</button>
+        </div>
     </div>
 </div>
 

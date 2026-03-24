@@ -1,94 +1,185 @@
-// Function to load the Edit Form into the right panel
+document.addEventListener("DOMContentLoaded", function () {
+  // Initial search filter listener
+  initSearch();
+});
+
+// SEARCH FILTER LOGIC
+function initSearch() {
+  const searchInput = document.getElementById("userSearch");
+  if (searchInput) {
+    searchInput.addEventListener("keyup", function () {
+      let filter = this.value.toLowerCase();
+      let rows = document.querySelectorAll("#userListBody tr");
+      rows.forEach((row) => {
+        let name = row.querySelector("td").innerText.toLowerCase();
+        row.style.display = name.includes(filter) ? "" : "none";
+      });
+    });
+  }
+}
+
+// LOAD USER FORM (AJAX)
 function loadUserForm(userId) {
-    fetch(`api/get_user.php?id=${userId}`)
-    .then(response => response.json())
-    .then(data => {
-        const dynamicContent = document.getElementById('dynamicContent');
-        document.getElementById('panelTitle').innerText = "Edit User";
-        
-        // Generate the HTML for the form
-        dynamicContent.innerHTML = `
-            <div class="card-body">
-                <form id="userForm">
-                    <input type="hidden" name="id" value="${data.id}">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">First Name</label>
-                            <input type="text" name="first_name" class="form-control" value="${data.first_name}" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Surname</label>
-                            <input type="text" name="surname" class="form-control" value="${data.surname}" required>
-                        </div>
-                        <div class="col-md-12">
-                            <label class="form-label">Email</label>
-                            <input type="email" name="email" class="form-control" value="${data.email}" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Role</label>
-                            <select name="role" class="form-select">
-                                <option value="Admin" ${data.role === 'Admin' ? 'selected' : ''}>Admin</option>
-                                <option value="Editor" ${data.role === 'Editor' ? 'selected' : ''}>Editor</option>
-                                <option value="Viewer" ${data.role === 'Viewer' ? 'selected' : ''}>Viewer</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6 d-flex align-items-end mb-2">
-                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="is_active" ${data.is_active == 1 ? 'checked' : ''}>
-                                <label class="form-check-label">Active Status</label>
-                            </div>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="d-flex justify-content-between">
-                        <button type="button" class="btn btn-outline-danger" onclick="confirmDelete(${data.id})">Delete User</button>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </div>
-                </form>
-            </div>
-        `;
-        attachFormSubmitListener();
-    });
+  fetch(`api/get_user.php?id=${userId}`)
+    .then((response) => {
+      if (!response.ok) throw new Error("User not found");
+      return response.json();
+    })
+    .then((data) => {
+      renderForm(data, "EDIT USER");
+    })
+    .catch((err) => alert(err.message));
 }
 
-// Function to load the New User Form
+// LOAD NEW USER FORM
 function loadNewUserForm() {
-    document.getElementById('panelTitle').innerText = "Add New User";
-    document.getElementById('dynamicContent').innerHTML = `
-        <div class="card-body">
-            <form id="userForm">
-                <div class="row g-3">
-                    <div class="col-md-6"><label class="form-label">First Name</label><input type="text" name="first_name" class="form-control" required></div>
-                    <div class="col-md-6"><label class="form-label">Surname</label><input type="text" name="surname" class="form-control" required></div>
-                    <div class="col-md-12"><label class="form-label">Email</label><input type="email" name="email" class="form-control" required></div>
-                    <div class="col-md-6"><label class="form-label">Password</label><input type="password" name="password" class="form-control" required></div>
-                    <div class="col-md-6"><label class="form-label">Confirm Password</label><input type="password" name="confirm_password" class="form-control" required></div>
-                </div>
-                <button type="submit" class="btn btn-success mt-4 w-100">Create User</button>
-            </form>
+  const emptyData = {
+    id: "",
+    first_name: "",
+    surname: "",
+    email: "",
+    special_app_access: 0,
+    role: "Viewer",
+    user_since: new Date().toLocaleDateString(),
+    last_login: "Never",
+    is_active: 1,
+  };
+  renderForm(emptyData, "ADD NEW USER");
+}
+
+//  RENDER FORM HTML
+function renderForm(data, title) {
+  const container = document.getElementById("dynamicContent");
+
+  // Checkboxes and specific fields from your screenshot
+  const isActiveChecked = data.is_active == 1 ? "checked" : "";
+  const isSpecialAccess = data.special_app_access == 1 ? "checked" : "";
+  const isAdmin = data.role === "Admin" ? "checked" : "";
+
+  container.innerHTML = `
+        <div class="text-center mb-4">
+            <div class="profile-img-placeholder mb-2 d-flex align-items-center justify-content-center text-white">
+                <i class="bi bi-person-fill display-4"></i>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-primary btn-sm px-3">Change Profile Picture</button>
+                <button class="btn btn-danger btn-sm">X</button>
+            </div>
         </div>
+
+        <form id="userForm" class="px-lg-5">
+            <input type="hidden" name="id" value="${data.id}">
+            
+            <div class="row mb-2 align-items-center">
+                <label class="col-sm-4 form-label-blue">First Name :</label>
+                <div class="col-sm-8"><input type="text" name="first_name" value="${data.first_name}" class="form-control form-control-sm" required></div>
+            </div>
+
+            <div class="row mb-2 align-items-center">
+                <label class="col-sm-4 form-label-blue">Surname :</label>
+                <div class="col-sm-8"><input type="text" name="surname" value="${data.surname}" class="form-control form-control-sm" required></div>
+            </div>
+
+            <div class="row mb-2 align-items-center">
+                <label class="col-sm-4 form-label-blue">Email :</label>
+                <div class="col-sm-8"><input type="email" name="email" value="${data.email}" class="form-control form-control-sm" required></div>
+            </div>
+
+            <div class="row mb-2 align-items-center">
+                <label class="col-sm-4 form-label-blue">Special App Access :</label>
+                <div class="col-sm-8">
+                    <div class="form-check"><input type="checkbox" name="special_app_access" class="form-check-input" ${isSpecialAccess}></div>
+                </div>
+            </div>
+
+            <div class="row mb-2 align-items-center">
+                <label class="col-sm-4 form-label-blue">New password :</label>
+                <div class="col-sm-8"><input type="password" name="password" class="form-control form-control-sm" placeholder="Enter new password.."></div>
+            </div>
+
+            <div class="row mb-2 align-items-center">
+                <label class="col-sm-4 form-label-blue">Confirm password :</label>
+                <div class="col-sm-8"><input type="password" name="confirm_password" class="form-control form-control-sm" placeholder="Confirm new password.."></div>
+            </div>
+
+            <div class="row mb-2 align-items-center">
+                <label class="col-sm-4 form-label-blue">Make admin :</label>
+                <div class="col-sm-8"><input type="checkbox" name="role" value="Admin" class="form-check-input" ${isAdmin}></div>
+            </div>
+
+            <div class="row mb-2 align-items-center">
+                <label class="col-sm-4 form-label-blue">User since :</label>
+                <div class="col-sm-8"><input type="text" class="form-control form-control-sm bg-light" value="${data.user_since || ""}" readonly></div>
+            </div>
+
+            <div class="row mb-2 align-items-center">
+                <label class="col-sm-4 form-label-blue">Last login :</label>
+                <div class="col-sm-8"><input type="text" class="form-control form-control-sm bg-light" value="${data.last_login || "N/A"}" readonly></div>
+            </div>
+
+            <div class="row mb-3 align-items-center">
+                <label class="col-sm-4 form-label-blue">Active Status :</label>
+                <div class="col-sm-8"><input type="checkbox" name="is_active" class="form-check-input" ${isActiveChecked}></div>
+            </div>
+
+            <div class="d-flex gap-2 mt-4 justify-content-center">
+                <button type="submit" class="btn btn-primary px-4 fw-bold">SAVE USER</button>
+                ${data.id ? `<button type="button" class="btn btn-primary px-4 fw-bold" onclick="confirmDelete(${data.id})">DELETE USER</button>` : ""}
+            </div>
+        </form>
     `;
-    attachFormSubmitListener();
+
+  attachFormSubmitListener();
 }
 
+//  SUBMIT HANDLER (SAVE/UPDATE) ---
 function attachFormSubmitListener() {
-    document.getElementById('userForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        fetch('api/save_user.php', { method: 'POST', body: formData })
-        .then(res => res.json())
-        .then(data => {
-            alert(data.message);
-            if(data.success) location.reload();
-        });
-    });
+  const form = document.getElementById("userForm");
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    // Basic Password Match Validation
+    const pass = formData.get("password");
+    const confirmPass = formData.get("confirm_password");
+    if (pass && pass !== confirmPass) {
+      alert("Passwords do not match!");
+      return;
+    }
+
+    fetch("api/save_user.php", {
+      method: "POST",
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        alert(data.message);
+        if (data.success) window.location.reload();
+      })
+      .catch((err) => console.error("Error saving:", err));
+  });
 }
 
+//  DELETE LOGIC ---
 function confirmDelete(id) {
-    if(confirm("Are you sure you want to delete this record?")) {
-        const fd = new FormData(); fd.append('id', id);
-        fetch('api/delete_user.php', { method: 'POST', body: fd })
-        .then(res => res.json())
-        .then(data => { alert(data.message); if(data.success) location.reload(); });
-    }
+  if (
+    confirm(
+      "Are you sure you want to delete this record? This cannot be undone.",
+    )
+  ) {
+    const fd = new FormData();
+    fd.append("id", id);
+
+    fetch("api/delete_user.php", {
+      method: "POST",
+      body: fd,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        alert(data.message);
+        if (data.success) window.location.reload();
+      })
+      .catch((err) => console.error("Error deleting:", err));
+  }
 }
