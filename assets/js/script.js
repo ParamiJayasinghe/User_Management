@@ -123,6 +123,45 @@ function renderForm(data, title) {
                 <div class="col-sm-8"><input type="checkbox" name="role" value="Admin" class="form-check-input" ${isAdmin}></div>
             </div>
 
+            <div class="row mb-1 align-items-center">
+                <label class="col-sm-4 form-label-blue">Make dealer admin :</label>
+                <div class="col-sm-8"><input type="checkbox" name="role_dealer_admin" class="form-check-input"></div>
+            </div>
+
+            <div class="row mb-1 align-items-center">
+                <label class="col-sm-4 form-label-blue">After Sales :</label>
+                <div class="col-sm-8"><input type="checkbox" name="role_after_sales" class="form-check-input"></div>
+            </div>
+
+            <div class="row mb-1 align-items-center">
+                <label class="col-sm-4 form-label-blue">After Sales Manager :</label>
+                <div class="col-sm-8"><input type="checkbox" name="role_after_sales_manager" class="form-check-input"></div>
+            </div>
+
+            <div class="row mb-1 align-items-center">
+                <label class="col-sm-4 form-label-blue">Sales User :</label>
+                <div class="col-sm-8"><input type="checkbox" name="role_sales_user" class="form-check-input"></div>
+            </div>
+
+            <div class="row mb-1 align-items-center">
+                <label class="col-sm-4 form-label-blue">Contact Centre User :</label>
+                <div class="col-sm-8"><input type="checkbox" name="role_contact_centre" class="form-check-input"></div>
+            </div>
+
+            <div class="row mb-2 align-items-center mt-3">
+                <label class="col-sm-4 form-label-blue">User since :</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control form-control-sm bg-light" value="${data.user_since || ''}" readonly>
+                </div>
+            </div>
+
+            <div class="row mb-2 align-items-center">
+                <label class="col-sm-4 form-label-blue">Last login :</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control form-control-sm bg-light" value="${data.last_login || ''}" readonly>
+                </div>
+            </div>
+
             <div class="row mb-2 align-items-center">
                 <label class="col-sm-4 form-label-blue">Active Status :</label>
                 <div class="col-sm-8"><input type="checkbox" name="is_active" class="form-check-input" ${isActiveChecked}></div>
