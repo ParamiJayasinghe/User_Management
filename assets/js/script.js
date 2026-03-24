@@ -1,9 +1,26 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // Initial search filter listener
   initSearch();
 });
 
-// SEARCH FILTER LOGIC
+//MODAL HELPER FUNCTIONS 
+
+function showModal(title, message, reload = false) {
+  const modalElem = document.getElementById('notificationModal');
+  const bsModal = new bootstrap.Modal(modalElem);
+  
+  document.getElementById('modalTitle').innerText = title;
+  document.getElementById('modalMessage').innerText = message;
+  
+  bsModal.show();
+
+  if (reload) {
+    modalElem.addEventListener('hidden.bs.modal', function () {
+      window.location.reload();
+    }, { once: true });
+  }
+}
+
+//SEARCH FILTER LOGIC 
 function initSearch() {
   const searchInput = document.getElementById("userSearch");
   if (searchInput) {
@@ -18,7 +35,7 @@ function initSearch() {
   }
 }
 
-// LOAD USER FORM (AJAX)
+//LOAD USER FORM (AJAX) 
 function loadUserForm(userId) {
   fetch(`api/get_user.php?id=${userId}`)
     .then((response) => {
@@ -28,10 +45,10 @@ function loadUserForm(userId) {
     .then((data) => {
       renderForm(data, "EDIT USER");
     })
-    .catch((err) => alert(err.message));
+    .catch((err) => showModal("Error", err.message));
 }
 
-// LOAD NEW USER FORM
+//LOAD NEW USER FORM 
 function loadNewUserForm() {
   const emptyData = {
     id: "",
@@ -47,12 +64,12 @@ function loadNewUserForm() {
   renderForm(emptyData, "ADD NEW USER");
 }
 
-//  RENDER FORM HTML
+//RENDER FORM HTML 
 function renderForm(data, title) {
   const container = document.getElementById("dynamicContent");
-  const isNewUser = !data.id; // true if we are adding a new user
+  const isNewUser = !data.id;
 
-  // Checkboxes logic
+  // Logic for checkboxes
   const isActiveChecked = data.is_active == 1 ? "checked" : "";
   const isSpecialAccess = data.special_app_access == 1 ? "checked" : "";
   const isAdmin = data.role === "Admin" ? "checked" : "";
@@ -62,9 +79,7 @@ function renderForm(data, title) {
             <h5 class="text-primary fw-bold">${title}</h5>
         </div>
         
-        ${
-          !isNewUser
-            ? `
+        ${!isNewUser ? `
         <div class="text-center mb-4">
             <div class="profile-img-placeholder mb-2 d-flex align-items-center justify-content-center text-white">
                 <i class="bi bi-person-fill display-4"></i>
@@ -74,9 +89,7 @@ function renderForm(data, title) {
                 <button class="btn btn-danger btn-sm">X</button>
             </div>
         </div>
-        `
-            : ""
-        }
+        ` : ""}
 
         <form id="userForm" class="px-lg-5 mt-3">
             <input type="hidden" name="id" value="${data.id}">
@@ -118,7 +131,7 @@ function renderForm(data, title) {
                 <div class="col-sm-8"><input type="password" name="confirm_password" id="confirmPassField" class="form-control form-control-sm" placeholder="Confirm new password.."></div>
             </div>
 
-            <div class="row mb-2 align-items-center">
+            <div class="row mb-1 align-items-center">
                 <label class="col-sm-4 form-label-blue">Make admin :</label>
                 <div class="col-sm-8"><input type="checkbox" name="role" value="Admin" class="form-check-input" ${isAdmin}></div>
             </div>
@@ -167,35 +180,27 @@ function renderForm(data, title) {
                 <div class="col-sm-8"><input type="checkbox" name="is_active" class="form-check-input" ${isActiveChecked}></div>
             </div>
 
- <div class="d-flex gap-2 mt-4 justify-content-center">
+            <div class="d-flex gap-2 mt-4 justify-content-center">
                 <button type="submit" class="btn btn-primary px-4 fw-bold">SAVE USER</button>
-                ${
-                  !isNewUser
-                    ? `
+                ${!isNewUser ? `
                     <button type="button" class="btn btn-primary px-4 fw-bold" onclick="confirmDelete(${data.id})">DELETE USER</button>
-                `
-                    : ""
-                }
+                ` : ""}
             </div>
 
-            ${
-              !isNewUser
-                ? `
-            <div class="text-center mt-4 pt-3">
-                <button type="button" class="btn btn-primary px-4 fw-bold " onclick="resendWelcomeMail(${data.id})">
+            ${!isNewUser ? `
+            <div class="text-center mt-4 pt-3 border-top">
+                <button type="button" class="btn btn-primary px-4 fw-bold" onclick="resendWelcomeMail(${data.id})">
                     RESEND WELCOME MAIL
                 </button>
             </div>
-            `
-                : ""
-            }
+            ` : ""}
         </form>
     `;
 
   attachFormSubmitListener();
 }
 
-//  SUBMIT HANDLER (SAVE/UPDATE) ---
+//SUBMIT HANDLER (SAVE/UPDATE) 
 function attachFormSubmitListener() {
   const form = document.getElementById("userForm");
   form.addEventListener("submit", function (e) {
@@ -203,11 +208,11 @@ function attachFormSubmitListener() {
 
     const formData = new FormData(this);
 
-    // Basic Password Match Validation
+    // Password Match Validation
     const pass = formData.get("password");
     const confirmPass = formData.get("confirm_password");
     if (pass && pass !== confirmPass) {
-      alert("Passwords do not match!");
+      showModal("Validation Error", "Passwords do not match!");
       return;
     }
 
@@ -217,40 +222,47 @@ function attachFormSubmitListener() {
     })
       .then((res) => res.json())
       .then((data) => {
-        alert(data.message);
-        if (data.success) window.location.reload();
+        if (data.success) {
+          showModal("Success", data.message, true);
+        } else {
+          showModal("Error", data.message);
+        }
       })
       .catch((err) => console.error("Error saving:", err));
   });
 }
 
-//  DELETE LOGIC ---
+//DELETE LOGIC WITH MODAL
 function confirmDelete(id) {
-  if (
-    confirm(
-      "Are you sure you want to delete this record? This cannot be undone.",
-    )
-  ) {
-    const fd = new FormData();
-    fd.append("id", id);
+    const deleteModalElem = document.getElementById('deleteConfirmModal');
+    const bsDeleteModal = new bootstrap.Modal(deleteModalElem);
+    bsDeleteModal.show();
 
-    fetch("api/delete_user.php", {
-      method: "POST",
-      body: fd,
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        alert(data.message);
-        if (data.success) window.location.reload();
-      })
-      .catch((err) => console.error("Error deleting:", err));
-  }
+    document.getElementById('confirmDeleteBtn').onclick = function() {
+        const fd = new FormData();
+        fd.append("id", id);
+
+        fetch("api/delete_user.php", {
+            method: "POST",
+            body: fd,
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            bsDeleteModal.hide();
+            if (data.success) {
+                showModal("Deleted", data.message, true);
+            } else {
+                showModal("Error", data.message);
+            }
+        })
+        .catch((err) => console.error("Error deleting:", err));
+    };
 }
 
-// Function to generate a random password
+//UTILITY FUNCTIONS
+
 function generatePassword() {
-  const charset =
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+  const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
   let retVal = "";
   for (let i = 0; i < 10; ++i) {
     retVal += charset.charAt(Math.floor(Math.random() * charset.length));
@@ -261,6 +273,10 @@ function generatePassword() {
 
   document.getElementById("passField").type = "text";
   document.getElementById("confirmPassField").type = "text";
+  
+  showModal("Password Generated", "Generated: " + retVal);
+}
 
-  alert("Generated Password: " + retVal);
+function resendWelcomeMail(userId) {
+    showModal("Email Status", "The welcome email has been resent to user ID: " + userId);
 }
