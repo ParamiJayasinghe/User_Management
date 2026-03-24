@@ -50,13 +50,21 @@ function loadNewUserForm() {
 //  RENDER FORM HTML
 function renderForm(data, title) {
   const container = document.getElementById("dynamicContent");
+  const isNewUser = !data.id; // true if we are adding a new user
 
-  // Checkboxes and specific fields from your screenshot
+  // Checkboxes logic
   const isActiveChecked = data.is_active == 1 ? "checked" : "";
   const isSpecialAccess = data.special_app_access == 1 ? "checked" : "";
   const isAdmin = data.role === "Admin" ? "checked" : "";
 
   container.innerHTML = `
+        <div class="card-header bg-white border-0">
+            <h5 class="text-primary fw-bold">${title}</h5>
+        </div>
+        
+        ${
+          !isNewUser
+            ? `
         <div class="text-center mb-4">
             <div class="profile-img-placeholder mb-2 d-flex align-items-center justify-content-center text-white">
                 <i class="bi bi-person-fill display-4"></i>
@@ -66,8 +74,11 @@ function renderForm(data, title) {
                 <button class="btn btn-danger btn-sm">X</button>
             </div>
         </div>
+        `
+            : ""
+        }
 
-        <form id="userForm" class="px-lg-5">
+        <form id="userForm" class="px-lg-5 mt-3">
             <input type="hidden" name="id" value="${data.id}">
             
             <div class="row mb-2 align-items-center">
@@ -88,18 +99,23 @@ function renderForm(data, title) {
             <div class="row mb-2 align-items-center">
                 <label class="col-sm-4 form-label-blue">Special App Access :</label>
                 <div class="col-sm-8">
-                    <div class="form-check"><input type="checkbox" name="special_app_access" class="form-check-input" ${isSpecialAccess}></div>
+                    <input type="checkbox" name="special_app_access" class="form-check-input" ${isSpecialAccess}>
                 </div>
             </div>
 
             <div class="row mb-2 align-items-center">
                 <label class="col-sm-4 form-label-blue">New password :</label>
-                <div class="col-sm-8"><input type="password" name="password" class="form-control form-control-sm" placeholder="Enter new password.."></div>
+                <div class="col-sm-8">
+                    <div class="input-group input-group-sm">
+                        <input type="password" name="password" id="passField" class="form-control" placeholder="Enter new password..">
+                        ${isNewUser ? `<button class="btn btn-outline-primary" type="button" onclick="generatePassword()">Generate</button>` : ""}
+                    </div>
+                </div>
             </div>
 
             <div class="row mb-2 align-items-center">
                 <label class="col-sm-4 form-label-blue">Confirm password :</label>
-                <div class="col-sm-8"><input type="password" name="confirm_password" class="form-control form-control-sm" placeholder="Confirm new password.."></div>
+                <div class="col-sm-8"><input type="password" name="confirm_password" id="confirmPassField" class="form-control form-control-sm" placeholder="Confirm new password.."></div>
             </div>
 
             <div class="row mb-2 align-items-center">
@@ -108,23 +124,13 @@ function renderForm(data, title) {
             </div>
 
             <div class="row mb-2 align-items-center">
-                <label class="col-sm-4 form-label-blue">User since :</label>
-                <div class="col-sm-8"><input type="text" class="form-control form-control-sm bg-light" value="${data.user_since || ""}" readonly></div>
-            </div>
-
-            <div class="row mb-2 align-items-center">
-                <label class="col-sm-4 form-label-blue">Last login :</label>
-                <div class="col-sm-8"><input type="text" class="form-control form-control-sm bg-light" value="${data.last_login || "N/A"}" readonly></div>
-            </div>
-
-            <div class="row mb-3 align-items-center">
                 <label class="col-sm-4 form-label-blue">Active Status :</label>
                 <div class="col-sm-8"><input type="checkbox" name="is_active" class="form-check-input" ${isActiveChecked}></div>
             </div>
 
             <div class="d-flex gap-2 mt-4 justify-content-center">
                 <button type="submit" class="btn btn-primary px-4 fw-bold">SAVE USER</button>
-                ${data.id ? `<button type="button" class="btn btn-primary px-4 fw-bold" onclick="confirmDelete(${data.id})">DELETE USER</button>` : ""}
+                ${!isNewUser ? `<button type="button" class="btn btn-primary px-4 fw-bold" onclick="confirmDelete(${data.id})">DELETE USER</button>` : ""}
             </div>
         </form>
     `;
@@ -182,4 +188,22 @@ function confirmDelete(id) {
       })
       .catch((err) => console.error("Error deleting:", err));
   }
+}
+
+// Function to generate a random password
+function generatePassword() {
+  const charset =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+  let retVal = "";
+  for (let i = 0; i < 10; ++i) {
+    retVal += charset.charAt(Math.floor(Math.random() * charset.length));
+  }
+
+  document.getElementById("passField").value = retVal;
+  document.getElementById("confirmPassField").value = retVal;
+
+  document.getElementById("passField").type = "text";
+  document.getElementById("confirmPassField").type = "text";
+
+  alert("Generated Password: " + retVal);
 }
