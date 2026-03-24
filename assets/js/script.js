@@ -2,8 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
   initSearch();
 });
 
-//MODAL HELPER FUNCTIONS 
-
+//MODAL HELPER FUNCTIONS
 function showModal(title, message, reload = false) {
   const modalElem = document.getElementById('notificationModal');
   const bsModal = new bootstrap.Modal(modalElem);
@@ -20,7 +19,7 @@ function showModal(title, message, reload = false) {
   }
 }
 
-//SEARCH FILTER LOGIC 
+//SEARCH FILTER LOGIC
 function initSearch() {
   const searchInput = document.getElementById("userSearch");
   if (searchInput) {
@@ -35,7 +34,22 @@ function initSearch() {
   }
 }
 
-//LOAD USER FORM (AJAX) 
+//EXCLUSIVE ROLE SELECTION LOGIC
+function initRoleSelection() {
+    const roleCheckboxes = document.querySelectorAll('.role-checkbox');
+    roleCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                // Uncheck all other role checkboxes
+                roleCheckboxes.forEach(other => {
+                    if (other !== this) other.checked = false;
+                });
+            }
+        });
+    });
+}
+
+//LOAD USER FORM (AJAX)
 function loadUserForm(userId) {
   fetch(`api/get_user.php?id=${userId}`)
     .then((response) => {
@@ -48,7 +62,7 @@ function loadUserForm(userId) {
     .catch((err) => showModal("Error", err.message));
 }
 
-//LOAD NEW USER FORM 
+//LOAD NEW USER FORM
 function loadNewUserForm() {
   const emptyData = {
     id: "",
@@ -64,12 +78,11 @@ function loadNewUserForm() {
   renderForm(emptyData, "ADD NEW USER");
 }
 
-//RENDER FORM HTML 
+//RENDER FORM HTML
 function renderForm(data, title) {
   const container = document.getElementById("dynamicContent");
   const isNewUser = !data.id;
 
-  // Logic for checkboxes
   const isActiveChecked = data.is_active == 1 ? "checked" : "";
   const isSpecialAccess = data.special_app_access == 1 ? "checked" : "";
   const isAdmin = data.role === "Admin" ? "checked" : "";
@@ -133,32 +146,32 @@ function renderForm(data, title) {
 
             <div class="row mb-1 align-items-center">
                 <label class="col-sm-4 form-label-blue">Make admin :</label>
-                <div class="col-sm-8"><input type="checkbox" name="role" value="Admin" class="form-check-input" ${isAdmin}></div>
+                <div class="col-sm-8"><input type="checkbox" name="role_admin" class="form-check-input role-checkbox" ${isAdmin}></div>
             </div>
 
             <div class="row mb-1 align-items-center">
                 <label class="col-sm-4 form-label-blue">Make dealer admin :</label>
-                <div class="col-sm-8"><input type="checkbox" name="role_dealer_admin" class="form-check-input"></div>
+                <div class="col-sm-8"><input type="checkbox" name="role_dealer_admin" class="form-check-input role-checkbox"></div>
             </div>
 
             <div class="row mb-1 align-items-center">
                 <label class="col-sm-4 form-label-blue">After Sales :</label>
-                <div class="col-sm-8"><input type="checkbox" name="role_after_sales" class="form-check-input"></div>
+                <div class="col-sm-8"><input type="checkbox" name="role_after_sales" class="form-check-input role-checkbox"></div>
             </div>
 
             <div class="row mb-1 align-items-center">
                 <label class="col-sm-4 form-label-blue">After Sales Manager :</label>
-                <div class="col-sm-8"><input type="checkbox" name="role_after_sales_manager" class="form-check-input"></div>
+                <div class="col-sm-8"><input type="checkbox" name="role_after_sales_manager" class="form-check-input role-checkbox"></div>
             </div>
 
             <div class="row mb-1 align-items-center">
                 <label class="col-sm-4 form-label-blue">Sales User :</label>
-                <div class="col-sm-8"><input type="checkbox" name="role_sales_user" class="form-check-input"></div>
+                <div class="col-sm-8"><input type="checkbox" name="role_sales_user" class="form-check-input role-checkbox"></div>
             </div>
 
             <div class="row mb-1 align-items-center">
                 <label class="col-sm-4 form-label-blue">Contact Centre User :</label>
-                <div class="col-sm-8"><input type="checkbox" name="role_contact_centre" class="form-check-input"></div>
+                <div class="col-sm-8"><input type="checkbox" name="role_contact_centre" class="form-check-input role-checkbox"></div>
             </div>
 
             <div class="row mb-2 align-items-center mt-3">
@@ -182,9 +195,7 @@ function renderForm(data, title) {
 
             <div class="d-flex gap-2 mt-4 justify-content-center">
                 <button type="submit" class="btn btn-primary px-4 fw-bold">SAVE USER</button>
-                ${!isNewUser ? `
-                    <button type="button" class="btn btn-primary px-4 fw-bold" onclick="confirmDelete(${data.id})">DELETE USER</button>
-                ` : ""}
+                ${!isNewUser ? `<button type="button" class="btn btn-primary px-4 fw-bold" onclick="confirmDelete(${data.id})">DELETE USER</button>` : ""}
             </div>
 
             ${!isNewUser ? `
@@ -198,9 +209,10 @@ function renderForm(data, title) {
     `;
 
   attachFormSubmitListener();
+  initRoleSelection(); 
 }
 
-//SUBMIT HANDLER (SAVE/UPDATE) 
+// SUBMIT HANDLER (SAVE/UPDATE)
 function attachFormSubmitListener() {
   const form = document.getElementById("userForm");
   form.addEventListener("submit", function (e) {
@@ -260,20 +272,16 @@ function confirmDelete(id) {
 }
 
 //UTILITY FUNCTIONS
-
 function generatePassword() {
   const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
   let retVal = "";
   for (let i = 0; i < 10; ++i) {
     retVal += charset.charAt(Math.floor(Math.random() * charset.length));
   }
-
   document.getElementById("passField").value = retVal;
   document.getElementById("confirmPassField").value = retVal;
-
   document.getElementById("passField").type = "text";
   document.getElementById("confirmPassField").type = "text";
-  
   showModal("Password Generated", "Generated: " + retVal);
 }
 
