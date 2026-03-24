@@ -199,7 +199,7 @@ function renderForm(data, title) {
             </div>
 
             ${!isNewUser ? `
-            <div class="text-center mt-4 pt-3 border-top">
+            <div class="text-center mt-4 pt-3 ">
                 <button type="button" class="btn btn-primary px-4 fw-bold" onclick="resendWelcomeMail(${data.id})">
                     RESEND WELCOME MAIL
                 </button>
