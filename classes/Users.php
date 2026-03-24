@@ -41,40 +41,46 @@ class User {
 
     //  Create or Update User
     public function save($data) {
-        if (isset($data['id']) && !empty($data['id'])) {
-            // UPDATE Logic
-            $query = "UPDATE " . $this->table_name . " 
-                      SET first_name=:first_name, surname=:surname, email=:email, 
-                          role=:role, is_active=:is_active, special_app_access=:special_app_access
-                      WHERE id=:id";
-        } else {
-            // INSERT Logic
-            $query = "INSERT INTO " . $this->table_name . " 
-                      SET first_name=:first_name, surname=:surname, email=:email, 
-                          password=:password, role=:role, is_active=:is_active, 
-                          special_app_access=:special_app_access";
-        }
-
+    if (isset($data['id']) && !empty($data['id'])) {
+        // --- UPDATE SETTINGS ---
+        
+        $query = "UPDATE " . $this->table_name . " 
+                  SET first_name = :first_name, 
+                      surname = :surname, 
+                      email = :email, 
+                      role = :role, 
+                      is_active = :is_active, 
+                      special_app_access = :special_app_access
+                  WHERE id = :id";
+        
         $stmt = $this->conn->prepare($query);
-
-        // Bind common values
-        $stmt->bindParam(':first_name', $data['first_name']);
-        $stmt->bindParam(':surname', $data['surname']);
-        $stmt->bindParam(':email', $data['email']);
-        $stmt->bindParam(':role', $data['role']);
-        $stmt->bindParam(':is_active', $data['is_active']);
-        $stmt->bindParam(':special_app_access', $data['special_app_access']);
-
-        if (!isset($data['id'])) {
-            // Only hash and bind password for new users
-            $hashed_password = password_hash($data['password'], PASSWORD_DEFAULT);
-            $stmt->bindParam(':password', $hashed_password);
-        } else {
-            $stmt->bindParam(':id', $data['id']);
-        }
-
-        return $stmt->execute();
+        $stmt->bindParam(':id', $data['id']);
+    } else {
+        // --- INSERT SETTINGS ---
+        $query = "INSERT INTO " . $this->table_name . " 
+                  SET first_name = :first_name, 
+                      surname = :surname, 
+                      email = :email, 
+                      password = :password, 
+                      role = :role, 
+                      is_active = :is_active, 
+                      special_app_access = :special_app_access";
+        
+        $stmt = $this->conn->prepare($query);
+        $hashed_password = password_hash($data['password'], PASSWORD_DEFAULT);
+        $stmt->bindParam(':password', $hashed_password);
     }
+
+    // Common parameters for both Insert and Update
+    $stmt->bindParam(':first_name', $data['first_name']);
+    $stmt->bindParam(':surname', $data['surname']);
+    $stmt->bindParam(':email', $data['email']);
+    $stmt->bindParam(':role', $data['role']);
+    $stmt->bindParam(':is_active', $data['is_active']);
+    $stmt->bindParam(':special_app_access', $data['special_app_access']);
+
+    return $stmt->execute();
+}
 
     //   Delete User
     public function delete($id) {
