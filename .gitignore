@@ -1,0 +1,10 @@
+# Ignore the actual credentials file
+.env
+
+# Ignore OS-generated files
+.DS_Store
+Thumbs.db
+
+# Ignore any error logs
+error_log
+php_errors.log
