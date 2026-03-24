@@ -151,14 +151,14 @@ function renderForm(data, title) {
             <div class="row mb-2 align-items-center mt-3">
                 <label class="col-sm-4 form-label-blue">User since :</label>
                 <div class="col-sm-8">
-                    <input type="text" class="form-control form-control-sm bg-light" value="${data.user_since || ''}" readonly>
+                    <input type="text" class="form-control form-control-sm bg-light" value="${data.user_since || ""}" readonly>
                 </div>
             </div>
 
             <div class="row mb-2 align-items-center">
                 <label class="col-sm-4 form-label-blue">Last login :</label>
                 <div class="col-sm-8">
-                    <input type="text" class="form-control form-control-sm bg-light" value="${data.last_login || ''}" readonly>
+                    <input type="text" class="form-control form-control-sm bg-light" value="${data.last_login || ""}" readonly>
                 </div>
             </div>
 
@@ -167,10 +167,28 @@ function renderForm(data, title) {
                 <div class="col-sm-8"><input type="checkbox" name="is_active" class="form-check-input" ${isActiveChecked}></div>
             </div>
 
-            <div class="d-flex gap-2 mt-4 justify-content-center">
+ <div class="d-flex gap-2 mt-4 justify-content-center">
                 <button type="submit" class="btn btn-primary px-4 fw-bold">SAVE USER</button>
-                ${!isNewUser ? `<button type="button" class="btn btn-primary px-4 fw-bold" onclick="confirmDelete(${data.id})">DELETE USER</button>` : ""}
+                ${
+                  !isNewUser
+                    ? `
+                    <button type="button" class="btn btn-primary px-4 fw-bold" onclick="confirmDelete(${data.id})">DELETE USER</button>
+                `
+                    : ""
+                }
             </div>
+
+            ${
+              !isNewUser
+                ? `
+            <div class="text-center mt-4 pt-3">
+                <button type="button" class="btn btn-primary px-4 fw-bold " onclick="resendWelcomeMail(${data.id})">
+                    RESEND WELCOME MAIL
+                </button>
+            </div>
+            `
+                : ""
+            }
         </form>
     `;
 

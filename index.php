@@ -83,9 +83,6 @@ $users = $userObj->getAll();
             </div>
         </div>
 
-        <div class="text-center mt-3">
-            <button class="btn btn-primary btn-sm px-4 shadow-sm">RESEND WELCOME MAIL</button>
-        </div>
     </div>
 </div>
 
