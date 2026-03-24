@@ -108,30 +108,30 @@ function renderForm(data, title) {
             <input type="hidden" name="id" value="${data.id}">
             
             <div class="row mb-2 align-items-center">
-                <label class="col-sm-4 form-label-blue">First Name :</label>
-                <div class="col-sm-8"><input type="text" name="first_name" value="${data.first_name}" class="form-control form-control-sm" required></div>
+                <label class="col-12 col-md-4 form-label-blue">First Name :</label>
+                <div class="col-12 col-md-8"><input type="text" name="first_name" value="${data.first_name}" class="form-control form-control-sm" required></div>
             </div>
 
             <div class="row mb-2 align-items-center">
-                <label class="col-sm-4 form-label-blue">Surname :</label>
-                <div class="col-sm-8"><input type="text" name="surname" value="${data.surname}" class="form-control form-control-sm" required></div>
+                <label class="col-12 col-md-4 form-label-blue">Surname :</label>
+                <div class="col-12 col-md-8"><input type="text" name="surname" value="${data.surname}" class="form-control form-control-sm" required></div>
             </div>
 
             <div class="row mb-2 align-items-center">
-                <label class="col-sm-4 form-label-blue">Email :</label>
-                <div class="col-sm-8"><input type="email" name="email" value="${data.email}" class="form-control form-control-sm" required></div>
+                <label class="col-12 col-md-4 form-label-blue">Email :</label>
+                <div class="col-12 col-md-8"><input type="email" name="email" value="${data.email}" class="form-control form-control-sm" required></div>
             </div>
 
             <div class="row mb-2 align-items-center">
-                <label class="col-sm-4 form-label-blue">Special App Access :</label>
-                <div class="col-sm-8">
+                <label class="col-12 col-md-4 form-label-blue">Special App Access :</label>
+                <div class="col-12 col-md-8">
                     <input type="checkbox" name="special_app_access" class="form-check-input" ${isSpecialAccess}>
                 </div>
             </div>
 
             <div class="row mb-2 align-items-center">
-                <label class="col-sm-4 form-label-blue">New password :</label>
-                <div class="col-sm-8">
+                <label class="col-12 col-md-4 form-label-blue">New password :</label>
+                <div class="col-12 col-md-8">
                     <div class="input-group input-group-sm">
                         <input type="password" name="password" id="passField" class="form-control" placeholder="Enter new password..">
                         ${isNewUser ? `<button class="btn btn-outline-primary" type="button" onclick="generatePassword()">Generate</button>` : ""}
@@ -140,57 +140,57 @@ function renderForm(data, title) {
             </div>
 
             <div class="row mb-2 align-items-center">
-                <label class="col-sm-4 form-label-blue">Confirm password :</label>
-                <div class="col-sm-8"><input type="password" name="confirm_password" id="confirmPassField" class="form-control form-control-sm" placeholder="Confirm new password.."></div>
+                <label class="col-12 col-md-4 form-label-blue">Confirm password :</label>
+                <div class="col-12 col-md-8"><input type="password" name="confirm_password" id="confirmPassField" class="form-control form-control-sm" placeholder="Confirm new password.."></div>
             </div>
 
             <div class="row mb-1 align-items-center">
-                <label class="col-sm-4 form-label-blue">Make admin :</label>
-                <div class="col-sm-8"><input type="checkbox" name="role_admin" class="form-check-input role-checkbox" ${isAdmin}></div>
+                <label class="col-12 col-md-4 form-label-blue">Make admin :</label>
+                <div class="col-12 col-md-8"><input type="checkbox" name="role_admin" class="form-check-input role-checkbox" ${isAdmin}></div>
             </div>
 
             <div class="row mb-1 align-items-center">
-                <label class="col-sm-4 form-label-blue">Make dealer admin :</label>
-                <div class="col-sm-8"><input type="checkbox" name="role_dealer_admin" class="form-check-input role-checkbox"></div>
+                <label class="col-12 col-md-4 form-label-blue">Make dealer admin :</label>
+                <div class="col-12 col-md-8"><input type="checkbox" name="role_dealer_admin" class="form-check-input role-checkbox"></div>
             </div>
 
             <div class="row mb-1 align-items-center">
-                <label class="col-sm-4 form-label-blue">After Sales :</label>
-                <div class="col-sm-8"><input type="checkbox" name="role_after_sales" class="form-check-input role-checkbox"></div>
+                <label class="col-12 col-md-4 form-label-blue">After Sales :</label>
+                <div class="col-12 col-md-8"><input type="checkbox" name="role_after_sales" class="form-check-input role-checkbox"></div>
             </div>
 
             <div class="row mb-1 align-items-center">
-                <label class="col-sm-4 form-label-blue">After Sales Manager :</label>
-                <div class="col-sm-8"><input type="checkbox" name="role_after_sales_manager" class="form-check-input role-checkbox"></div>
+                <label class="col-12 col-md-4 form-label-blue">After Sales Manager :</label>
+                <div class="col-12 col-md-8"><input type="checkbox" name="role_after_sales_manager" class="form-check-input role-checkbox"></div>
             </div>
 
             <div class="row mb-1 align-items-center">
-                <label class="col-sm-4 form-label-blue">Sales User :</label>
-                <div class="col-sm-8"><input type="checkbox" name="role_sales_user" class="form-check-input role-checkbox"></div>
+                <label class="col-12 col-md-4 form-label-blue">Sales User :</label>
+                <div class="col-12 col-md-8"><input type="checkbox" name="role_sales_user" class="form-check-input role-checkbox"></div>
             </div>
 
             <div class="row mb-1 align-items-center">
-                <label class="col-sm-4 form-label-blue">Contact Centre User :</label>
-                <div class="col-sm-8"><input type="checkbox" name="role_contact_centre" class="form-check-input role-checkbox"></div>
+                <label class="col-12 col-md-4 form-label-blue">Contact Centre User :</label>
+                <div class="col-12 col-md-8"><input type="checkbox" name="role_contact_centre" class="form-check-input role-checkbox"></div>
             </div>
 
             <div class="row mb-2 align-items-center mt-3">
-                <label class="col-sm-4 form-label-blue">User since :</label>
-                <div class="col-sm-8">
+                <label class="col-12 col-md-4 form-label-blue">User since :</label>
+                <div class="col-12 col-md-8">
                     <input type="text" class="form-control form-control-sm bg-light" value="${data.user_since || ""}" readonly>
                 </div>
             </div>
 
             <div class="row mb-2 align-items-center">
-                <label class="col-sm-4 form-label-blue">Last login :</label>
-                <div class="col-sm-8">
+                <label class="col-12 col-md-4 form-label-blue">Last login :</label>
+                <div class="col-12 col-md-8">
                     <input type="text" class="form-control form-control-sm bg-light" value="${data.last_login || ""}" readonly>
                 </div>
             </div>
 
             <div class="row mb-2 align-items-center">
-                <label class="col-sm-4 form-label-blue">Active Status :</label>
-                <div class="col-sm-8"><input type="checkbox" name="is_active" class="form-check-input" ${isActiveChecked}></div>
+                <label class="col-12 col-md-4 form-label-blue">Active Status :</label>
+                <div class="col-12 col-md-8"><input type="checkbox" name="is_active" class="form-check-input" ${isActiveChecked}></div>
             </div>
 
             <div class="d-flex gap-2 mt-4 justify-content-center">

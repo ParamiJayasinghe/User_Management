@@ -1,10 +1,14 @@
+
 .bg-primary-custom {
     background: linear-gradient(180deg, #3264a8 0%, #1e407a 100%);
     min-height: 100vh;
+    background-attachment: fixed; 
 }
+
 
 .sidebar-nav {
     width: 150px;
+    flex-shrink: 0; 
 }
 
 .btn-primary-dark {
@@ -13,6 +17,12 @@
     color: white;
     font-size: 0.75rem;
     font-weight: bold;
+    transition: background-color 0.2s; 
+}
+
+.btn-primary-dark:hover {
+    background-color: #3b6394;
+    color: white;
 }
 
 .btn-primary-dark.active {
@@ -20,23 +30,69 @@
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
 }
 
+
 .list-scroll {
-    max-height: 500px;
+    max-height: 600px; 
     overflow-y: auto;
+}
+
+.list-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+.list-scroll::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
 }
 
 .cursor-pointer { cursor: pointer; }
 
+
 .form-label-blue {
     color: #4a7ab5;
     font-weight: 500;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+}
+
+
+#userForm .row {
+    margin-bottom: 8px !important;
 }
 
 .profile-img-placeholder {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     background-color: #4a90e2;
     border-radius: 50%;
     margin: 0 auto;
+}
+
+/* 5. Mobile Optimizations */
+@media (max-width: 768px) {
+    .sidebar-nav {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        margin-bottom: 15px;
+        padding: 0 10px;
+    }
+
+    .d-flex.mt-3 {
+        flex-direction: column;
+    }
+
+    body, html {
+        overflow-y: auto;
+        height: auto;
+    }
+
+    .list-scroll {
+        max-height: 300px; 
+    }
+
+    .form-label-blue {
+        text-align: left;
+        margin-bottom: 2px;
+        display: block;
+    }
 }
