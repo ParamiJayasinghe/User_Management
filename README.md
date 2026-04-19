@@ -22,13 +22,6 @@ A modern, responsive User Management System built with **PHP (OOP)**, **MySQL**,
 - **Frontend**: Bootstrap 5, Vanilla JavaScript (AJAX/Fetch API)
 - **Icons**: Bootstrap Icons
 
-## 📸 Project Preview
-
-| User List View | Detailed Profile View | Add New User Flow |
-| :---: | :---: | :---: |
-| ![User Listing Dashboard](./screenshots/UserList.png) | ![Detailed User Record](./screenshots/DetailsWithUserName.png) | ![New User Creation Form](./screenshots/AddNewUser.png) |
-| *Modern Bootstrap Dashboard* | *AJAX-based profile editing* | *Secure user creation flow* |
-
 ## ⚙️ Setup Instructions
 
 ### 1. Database Configuration

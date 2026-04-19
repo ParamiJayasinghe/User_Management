@@ -1,14 +1,14 @@
 <?php
 
-require_once __DIR__ . '/setup.php'; 
+require_once __DIR__ . '/setup.php'; //to load credentials
 
 class Database {
     private $host;
     private $db_name;
     private $username;
     private $password;
-    private static $instance = null;
-    public $conn;
+    private static $instance = null; //singleton variable
+    public $conn; //actual PDO connection
 
     // Private constructor to prevent direct instantiation
     private function __construct() {

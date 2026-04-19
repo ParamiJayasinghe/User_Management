@@ -25,7 +25,7 @@ class User {
     // Read All Users 
     public function getAll() {
         $query = "SELECT * FROM " . $this->table_name . " ORDER BY created_at DESC";
-        $stmt = $this->conn->prepare($query);
+        $stmt = $this->conn->prepare($query); //prepared statement
         $stmt->execute();
         return $stmt->fetchAll();
     }
